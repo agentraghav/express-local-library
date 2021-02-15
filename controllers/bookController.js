@@ -316,9 +316,11 @@ exports.book_update_get = function (req, res, next) {
 
 exports.book_update_post = [
   (req, res, next) => {
-    if (!(req.body.genre instanceof Array)) {
-      if (typeof req.body.genre === 'undefined') req.body.genre = [];
-      else req.body.genre = new Array(req.body.genre);
+    const { genre } = req.body;
+
+    if (!(genre instanceof Array)) {
+      if (typeof genre === 'undefined') genre = [];
+      else genre = new Array(genre);
     }
     next();
   },

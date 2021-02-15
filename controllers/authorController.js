@@ -153,15 +153,15 @@ exports.author_delete_get = function (req, res, next) {
 // Handle Author delete Post
 
 exports.author_delete_post = function (req, res, next) {
-  const { authorid } = req.body;
+  const { authorId } = req.body;
 
   async.parallel(
     {
       author: function (callback) {
-        Author.findById(authorid).exec(callback);
+        Author.findById(authorId).exec(callback);
       },
       author_books: function (callback) {
-        Book.find({ author: authorid }).exec(callback);
+        Book.find({ author: authorId }).exec(callback);
       },
     },
     function (err, result) {
@@ -251,10 +251,7 @@ exports.author_update_post = [
       });
       return;
     } else {
-      Author.findByIdAndUpdate(req.params.id, author, {}, function (
-        err,
-        theauthor
-      ) {
+      Author.findByIdAndUpdate(id, author, {}, function (err, theauthor) {
         if (err) {
           return next(err);
         }

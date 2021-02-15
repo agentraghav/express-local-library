@@ -1,10 +1,10 @@
-const Genre = require('../models/genre');
-
-const Book = require('../models/book');
-
 const async = require('async');
 
 const { body, validationResult } = require('express-validator');
+
+const Genre = require('../models/genre');
+
+const Book = require('../models/book');
 
 const Author = require('../models/author');
 
@@ -131,15 +131,15 @@ exports.genre_delete_get = function (req, res, next) {
 // genre delete on post
 
 exports.genre_delete_post = function (req, res, next) {
-  const { genreid } = req.body;
+  const { genreId } = req.body;
 
   async.parallel(
     {
       genre: function (callback) {
-        Genre.findById(genreid).exec(callback);
+        Genre.findById(genreId).exec(callback);
       },
       genres_books: function (callback) {
-        Book.find({ genre: genreid }).exec(callback);
+        Book.find({ genre: genreId }).exec(callback);
       },
     },
     function (err, results) {

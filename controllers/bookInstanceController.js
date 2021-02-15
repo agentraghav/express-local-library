@@ -1,9 +1,10 @@
-const BookInstance = require('../models/bookinstance');
+const async = require('async');
 
 const { body, validationResult } = require('express-validator');
-const Book = require('../models/book');
 
-const async = require('async');
+const BookInstance = require('../models/bookinstance');
+
+const Book = require('../models/book');
 
 // bookinstance list
 
@@ -134,18 +135,18 @@ exports.bookinstance_delete_get = function (req, res, next) {
 // bookinstance delete on post
 
 exports.bookinstance_delete_post = function (req, res, next) {
-  const { bookinstanceid } = req.body;
+  const { bookinstanceId } = req.body;
 
   async.parallel(
     {
       bookInstance: function (callback) {
-        BookInstance.findById(bookinstanceid).exec(callback);
+        BookInstance.findById(bookinstanceId).exec(callback);
       },
     },
     function (err, results) {
       if (err) return next(err);
       BookInstance.findByIdAndRemove(
-        bookinstanceid,
+        bookinstanceId,
         function deleteBookInstance(err) {
           if (err) return next(err);
           res.redirect('/catalog/bookinstances');
@@ -239,7 +240,7 @@ exports.bookinstance_update_post = [
       );
       return;
     } else {
-      BookInstance.findByIdAndUpdate(req.params.id, bookInstance, {}, function (
+      BookInstance.findByIdAndUpdate(id, bookInstance, {}, function (
         err,
         thebookinstance
       ) {

@@ -1,6 +1,6 @@
 const async = require('async');
 
-const { body, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 
 const Author = require('../models/author');
 
@@ -64,58 +64,33 @@ exports.author_create_get = function (req, res, next) {
 
 // Handle Author Create Form on Post request
 
-exports.author_create_post = [
-  body('first_name')
-    .trim()
-    .isLength({ min: 1 })
-    .escape()
-    .withMessage('First Name must be specified')
-    .isAlphanumeric()
-    .withMessage('First Name should not contain Alphanumeric Character'),
-  body('family_name')
-    .trim()
-    .isLength({ min: 1 })
-    .escape()
-    .withMessage('Family Name must be specified')
-    .isAlphanumeric()
-    .withMessage('Family Name should not contain Alphanumeric Character'),
-  body('date_of_birth', 'Invalid date of birth')
-    .optional({ checkFalsy: true })
-    .isISO8601()
-    .toDate(),
-  body('date_of_death', 'Invalid date of death')
-    .optional({ checkFalsy: true })
-    .isISO8601()
-    .toDate(),
+exports.author_create_post = function (req, res, next) {
+  const { first_name, family_name, date_of_birth, date_of_death } = req.body;
 
-  (req, res, next) => {
-    const { first_name, family_name, date_of_birth, date_of_death } = req.body;
+  const errors = validationResult(req);
 
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      res.render('author_form', {
-        title: 'Create Author',
-        author: req.body,
-        errors: errors.array(),
-      });
-      return;
-    } else {
-      var author = new Author({
-        first_name: first_name,
-        family_name: family_name,
-        date_of_birth: date_of_birth,
-        date_of_death: date_of_death,
-      });
-      author.save(function (err) {
-        if (err) {
-          return next(err);
-        }
-        res.redirect(author.url);
-      });
-    }
-  },
-];
+  if (!errors.isEmpty()) {
+    res.render('author_form', {
+      title: 'Create Author',
+      author: req.body,
+      errors: errors.array(),
+    });
+    return;
+  } else {
+    var author = new Author({
+      first_name: first_name,
+      family_name: family_name,
+      date_of_birth: date_of_birth,
+      date_of_death: date_of_death,
+    });
+    author.save(function (err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect(author.url);
+    });
+  }
+};
 
 // Author delete get
 
@@ -217,46 +192,31 @@ exports.author_update_get = function (req, res, next) {
 
 // Handle author update on post
 
-exports.author_update_post = [
-  body('first_name', 'First Name must not be empty.')
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
-  body('family_name', 'Family Name must not be empty.')
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
-  body('date_of_birth', 'Date of Birth must not be empty.')
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
+exports.author_update_post = function (req, res, next) {
+  const { first_name, family_name, date_of_birth, date_of_death } = req.body;
+  const { id } = req.params;
+  const errors = validationResult(req);
 
-  (req, res, next) => {
-    const { first_name, family_name, date_of_birth, date_of_death } = req.body;
-    const { id } = req.params;
-    const errors = validationResult(req);
-
-    var author = new Author({
-      first_name: first_name,
-      family_name: family_name,
-      date_of_birth: date_of_birth,
-      date_of_death: date_of_death,
-      _id: id,
+  var author = new Author({
+    first_name: first_name,
+    family_name: family_name,
+    date_of_birth: date_of_birth,
+    date_of_death: date_of_death,
+    _id: id,
+  });
+  if (!errors.isEmpty()) {
+    res.render('author_form', {
+      title: 'Update Form',
+      author: author,
+      errors: errors.array(),
     });
-    if (!errors.isEmpty()) {
-      res.render('author_form', {
-        title: 'Update Form',
-        author: author,
-        errors: errors.array(),
-      });
-      return;
-    } else {
-      Author.findByIdAndUpdate(id, author, {}, function (err, theauthor) {
-        if (err) {
-          return next(err);
-        }
-        res.redirect(theauthor.url);
-      });
-    }
-  },
-];
+    return;
+  } else {
+    Author.findByIdAndUpdate(id, author, {}, function (err, theauthor) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect(theauthor.url);
+    });
+  }
+};

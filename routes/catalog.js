@@ -6,7 +6,10 @@ const book_controller = require('../controllers/bookController');
 const author_controller = require('../controllers/authorController');
 const genre_controller = require('../controllers/genreController');
 const book_instance_controller = require('../controllers/bookInstanceController');
-
+const author_validation = require('../validators/authorValidation');
+const book_validation = require('../validators/bookValidation');
+const bookinstance_validation = require('../validators/bookinstanceValidation');
+const genre_validation = require('../validators/genreValidation');
 // GET catalog home page
 router.get('/', book_controller.index);
 
@@ -14,7 +17,11 @@ router.get('/', book_controller.index);
 router.get('/book/create', book_controller.book_create_get);
 
 // POST request for creating Book
-router.post('/book/create', book_controller.book_create_post);
+router.post(
+  '/book/create',
+  book_validation.book_post_validation,
+  book_controller.book_create_post
+);
 
 // GET request to delete book
 router.get('/book/:id/delete', book_controller.book_delete_get);
@@ -40,7 +47,11 @@ router.get('/books', book_controller.book_list);
 router.get('/author/create', author_controller.author_create_get);
 
 // POST request for creating Author
-router.post('/author/create', author_controller.author_create_post);
+router.post(
+  '/author/create',
+  author_validation.author_post_validation,
+  author_controller.author_create_post
+);
 
 // GET request to delete Author
 router.get('/author/:id/delete', author_controller.author_delete_get);
@@ -52,7 +63,11 @@ router.post('/author/:id/delete', author_controller.author_delete_post);
 router.get('/author/:id/update', author_controller.author_update_get);
 
 // POST request to udpate Author
-router.post('/author/:id/update', author_controller.author_update_post);
+router.post(
+  '/author/:id/update',
+  author_validation.author_update_validation,
+  author_controller.author_update_post
+);
 
 // GET request for one Author
 router.get('/author/:id', author_controller.author_detail);
@@ -66,7 +81,11 @@ router.get('/authors', author_controller.author_list);
 router.get('/genre/create', genre_controller.genre_create_get);
 
 //POST request for creating Genre.
-router.post('/genre/create', genre_controller.genre_create_post);
+router.post(
+  '/genre/create',
+  genre_validation.genre_post_validation,
+  genre_controller.genre_create_post
+);
 
 // GET request to delete Genre.
 router.get('/genre/:id/delete', genre_controller.genre_delete_get);
@@ -78,7 +97,11 @@ router.post('/genre/:id/delete', genre_controller.genre_delete_post);
 router.get('/genre/:id/update', genre_controller.genre_update_get);
 
 // POST request to update Genre.
-router.post('/genre/:id/update', genre_controller.genre_update_post);
+router.post(
+  '/genre/:id/update',
+  genre_validation.genre_update_validation,
+  genre_controller.genre_update_post
+);
 
 // GET request for one Genre.
 router.get('/genre/:id', genre_controller.genre_detail);
@@ -97,6 +120,7 @@ router.get(
 // POST request for creating BookInstance.
 router.post(
   '/bookinstance/create',
+  bookinstance_validation.bookinstance_post_validation,
   book_instance_controller.bookinstance_create_post
 );
 
@@ -121,6 +145,7 @@ router.get(
 // POST request to update BookInstance.
 router.post(
   '/bookinstance/:id/update',
+  bookinstance_validation.bookinstance_update_validation,
   book_instance_controller.bookinstance_update_post
 );
 
